@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#1d1d1b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="No Chips">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>No Chips</title>
+<style>
+:root{--bg:#f5f2ed;--card:#fffdf9;--ink:#1d1d1b;--muted:#8c8881;--line:#e7e0d7;--accent:#c85f3d;--soft:#eee9e1;--green:#dce8dd}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;-webkit-tap-highlight-color:transparent}.app{max-width:520px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom));min-height:100svh}
+header{display:flex;justify-content:space-between;align-items:center;padding:8px 3px 25px}.brand{font-size:14px;font-weight:800;letter-spacing:.09em}.date{font-size:11px;color:var(--muted)}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:30px;padding:26px 22px 20px;box-shadow:0 14px 40px #3b30220b}
+.eyebrow{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}.days{font-size:94px;line-height:.84;letter-spacing:-.08em;font-weight:850;margin:15px 0 10px}.label{font-size:17px;font-weight:700}.message{font-size:13px;color:var(--muted);margin-top:7px;min-height:18px}
+.progress{height:7px;background:var(--soft);border-radius:99px;margin:24px 0 17px;overflow:hidden}.bar{height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.actions{display:flex;gap:9px}.primary{flex:1;border:0;background:var(--ink);color:white;border-radius:16px;padding:15px;font-size:14px;font-weight:750}.iconbtn{width:50px;border:0;background:var(--soft);border-radius:16px;font-size:20px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.stat{background:var(--card);border:1px solid var(--line);border-radius:21px;padding:17px}.num{font-size:28px;font-weight:850;letter-spacing:-.04em}.small{font-size:11px;color:var(--muted);margin-top:3px}
+.section{margin-top:25px}.sectionhead{display:flex;justify-content:space-between;align-items:end;margin-bottom:11px}.title{font-size:17px;font-weight:780}.month{font-size:11px;color:var(--muted)}
+.calendar{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:15px}.week,.dates{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.week div{text-align:center;font-size:9px;color:var(--muted);font-weight:800}.dates{margin-top:9px}.day{aspect-ratio:1;border-radius:11px;background:#f1ede7;display:flex;align-items:center;justify-content:center;font-size:11px;color:#aaa}.empty{background:transparent}.done{background:var(--green);color:#47624e;font-weight:800}.today{outline:2px solid var(--accent);outline-offset:2px}.future{opacity:.38}
+.goal{margin-top:12px;background:var(--ink);color:white;border-radius:22px;padding:18px 19px}.goaltop{display:flex;justify-content:space-between;align-items:center}.goalname{font-size:14px;font-weight:750}.goalpct{font-size:12px;color:#d7d3cd}.goalbar{height:5px;background:#45433f;border-radius:9px;margin-top:12px;overflow:hidden}.goalfill{height:100%;background:#e7a28d;border-radius:9px;transition:.5s}
+.quote{margin-top:12px;padding:17px 18px;background:#eee8df;border-radius:20px;font-size:13px;line-height:1.5;color:#4f4b45}.quote b{color:var(--accent)}
+.install{display:none;margin-top:12px;background:#fff3ee;border:1px solid #efd3c8;border-radius:18px;padding:13px 15px;font-size:12px;line-height:1.4}.install button{margin-top:8px;border:0;background:var(--accent);color:white;border-radius:11px;padding:9px 12px;font-size:12px;font-weight:700}
+.modal{position:fixed;inset:0;background:#18161366;display:none;align-items:flex-end;justify-content:center;padding:12px;z-index:5}.sheet{width:min(520px,100%);background:var(--card);border-radius:27px;padding:23px}.sheet h2{margin:0 0 7px;font-size:21px}.sheet p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}.sheet button{width:100%;margin-top:9px;border:0;border-radius:15px;padding:14px;font-weight:750}.danger{background:#f6e2dc;color:#913d2a}.cancel{background:var(--soft)}
+.toast{position:fixed;left:50%;bottom:calc(25px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#1d1d1b;color:white;border-radius:14px;padding:11px 15px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<main class="app">
+<header><div class="brand">NO CHIPS</div><div class="date" id="date"></div></header>
+<section class="hero">
+<div class="eyebrow">текущая серия</div><div class="days" id="days">0</div><div class="label">дней без чипсов</div><div class="message" id="message"></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="actions"><button class="primary" id="done">✓  Отметить сегодня</button><button class="iconbtn" id="reset">↺</button></div>
+</section>
+<div class="stats"><div class="stat"><div class="num" id="best">0</div><div class="small">лучший streak</div></div><div class="stat"><div class="num" id="total">0</div><div class="small">всего чистых дней</div></div></div>
+<div class="section"><div class="sectionhead"><div class="title">История</div><div class="month" id="month"></div></div>
+<div class="calendar"><div class="week"><div>ПН</div><div>ВТ</div><div>СР</div><div>ЧТ</div><div>ПТ</div><div>СБ</div><div>ВС</div></div><div class="dates" id="calendar"></div></div></div>
+<div class="goal"><div class="goaltop"><div class="goalname">Цель: 7 дней</div><div class="goalpct" id="pct">0 / 7</div></div><div class="goalbar"><div class="goalfill" id="goalfill"></div></div></div>
+<div class="quote" id="quote">Не нужно отказаться навсегда. <b>Нужно выбрать сегодня.</b></div>
+<div class="install" id="install"><b>Добавить No Chips на экран «Домой»</b><br>В Safari нажми «Поделиться» → «На экран “Домой”».<br><button id="installClose">Понятно</button></div>
+</main>
+<div class="modal" id="modal"><div class="sheet"><h2>Начать заново?</h2><p>История останется, но текущая серия будет сброшена. Это не провал — просто новый старт.</p><button class="danger" id="confirm">Сбросить серию</button><button class="cancel" id="cancel">Отмена</button></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const KEY="no-chips-pwa-v2";let data=JSON.parse(localStorage.getItem(KEY)||'{"done":[],"start":null}');
+const today=()=>{let d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())};
+const iso=d=>{let y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`};
+const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
+function streak(){let n=0,d=today();while(data.done.includes(iso(d))){n++;d.setDate(d.getDate()-1)}return n}
+function best(){let a=[...new Set(data.done)].sort(),b=0,r=0;for(let i=0;i<a.length;i++){let d=new Date(a[i]+'T00:00:00'),p=i?new Date(a[i-1]+'T00:00:00'):null;r=p&&(d-p===86400000)?r+1:1;b=Math.max(b,r)}return b}
+function toast(t){let x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
+function render(){
+ let t=today(),s=streak();document.getElementById('days').textContent=s;document.getElementById('best').textContent=best();document.getElementById('total').textContent=data.done.length;
+ document.getElementById('date').textContent=t.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+ let msgs=['Начни сегодня. Один день — уже победа.','Хороший старт. Просто продолжай.','Ты уже меняешь привычку.','Серия набирает силу.','Это уже становится привычкой.','Смотри, сколько ты можешь.'];
+ document.getElementById('message').textContent=msgs[Math.min(s,5)];
+ document.getElementById('bar').style.width=(s%7===0&&s>0?100:(s%7)/7*100)+'%';
+ document.getElementById('pct').textContent=Math.min(s,7)+' / 7';document.getElementById('goalfill').style.width=Math.min(s/7*100,100)+'%';
+ draw(t);
+}
+function draw(t){let c=document.getElementById('calendar');c.innerHTML='';document.getElementById('month').textContent=t.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});let f=new Date(t.getFullYear(),t.getMonth(),1),off=(f.getDay()+6)%7,total=new Date(t.getFullYear(),t.getMonth()+1,0).getDate();for(let i=0;i<off;i++){let x=document.createElement('div');x.className='day empty';c.appendChild(x)}for(let n=1;n<=total;n++){let d=new Date(t.getFullYear(),t.getMonth(),n),x=document.createElement('div');x.className='day';x.textContent=n;if(data.done.includes(iso(d)))x.classList.add('done');if(iso(d)===iso(t))x.classList.add('today');if(d>t)x.classList.add('future');c.appendChild(x)}}
+document.getElementById('done').onclick=()=>{let k=iso(today());if(!data.done.includes(k)){data.done.push(k);if(!data.start)data.start=k;save();render();toast('Сегодня отмечено ✓')}else toast('Сегодня уже отмечено ✓')};
+document.getElementById('reset').onclick=()=>document.getElementById('modal').style.display='flex';
+document.getElementById('cancel').onclick=()=>document.getElementById('modal').style.display='none';
+document.getElementById('confirm').onclick=()=>{data.done=[];data.start=null;save();document.getElementById('modal').style.display='none';render();toast('Новый старт')};
+document.getElementById('installClose').onclick=()=>{document.getElementById('install').style.display='none';localStorage.setItem('installSeen','1')};
+if(!localStorage.getItem('installSeen')&&!window.matchMedia('(display-mode: standalone)').matches&&/iPhone|iPad|iPod/i.test(navigator.userAgent))document.getElementById('install').style.display='block';
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js');
+render();
+</script>
+</body>
+</html>
